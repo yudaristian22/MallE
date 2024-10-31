@@ -11,6 +11,9 @@ import ForgotPassword from './src/screens/ForgotPassword';
 import ProfileDetailsMypurchase from './src/screens/ProfileDetailsMypurchase';
 import ProfileDetailsMystore from './src/screens/ProfileDetailsMystore';
 import SettingUser from './src/screens/SettingUser';
+import DetailProduk from './src/screens/DetailProduk';
+import Payment from './src/screens/Payment';
+import Home from './src/screens/Home';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,7 +21,7 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="SplashScreen"
+        initialRouteName="SignIn"
         screenOptions={{headerShown: false}}>
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="Splash1" component={Splash1} />
@@ -36,6 +39,9 @@ function App() {
           component={ProfileDetailsMystore}
         />
         <Stack.Screen name="SettingUser" component={SettingUser} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Detail" component={DetailProduk} />
+        <Stack.Screen name="Payment" component={Payment} />
       </Stack.Navigator>
     </NavigationContainer>
   );
