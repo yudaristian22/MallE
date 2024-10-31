@@ -50,7 +50,7 @@ const ProfileDetailsMypurchase = ({navigation}) => {
       <StatusBar backgroundColor={'#FFFFFF'} barStyle={'dark-content'} />
 
       {/* Header */}
-      <TouchableOpacity style={styles.header}>
+      <TouchableOpacity style={styles.header} onPress={() => navigation.pop()}>
         <Icon name="angle-left" size={25} color="#3E3E40" />
       </TouchableOpacity>
 
