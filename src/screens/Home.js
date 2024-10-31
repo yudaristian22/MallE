@@ -63,7 +63,7 @@ const data = [
     id: '5',
     title: 'Multi Layer Perception',
     category: 'Deep Learning',
-    price: 'Rp. 6000',
+    price: 'Rp. 7000',
     rating: '4.5',
     reviews: '2,56,890',
     image: require('../assets/images/g-01.jpg'),
