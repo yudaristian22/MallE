@@ -8,6 +8,9 @@ import {
   ScrollView,
 } from 'react-native';
 
+import Icon from 'react-native-vector-icons/FontAwesome6';
+import {fonts} from '../assets/fonts';
+
 const DetailProduk = ({route, navigation}) => {
   const {item} = route.params; // Get item from navigation parameters
 
@@ -17,6 +20,16 @@ const DetailProduk = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.iconHeader}
+          onPress={() => navigation.pop()}>
+          <Icon name="angle-left" size={25} color="#3E3E40" />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>Detail Resume</Text>
+      </View>
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Image source={item.image} style={styles.image} />
         <Text style={styles.title}>{item.title}</Text>
@@ -46,10 +59,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    padding: 10,
   },
   scrollContent: {
-    padding: 16,
-    paddingBottom: 100, // Extra padding to prevent overlap with footer
+    padding: 10,
+    paddingBottom: 60, // Extra padding to prevent overlap with footer
+  },
+  header: {
+    marginVertical: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconHeader: {
+    position: 'absolute',
+    left: 1,
+  },
+  headerText: {
+    fontFamily: fonts.primary.bold,
+    fontSize: 18,
+    textAlign: 'center',
   },
   image: {
     width: '100%',
@@ -61,6 +90,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 24,
     marginBottom: 8,
+    marginTop: 8,
   },
   category: {
     color: '#555',
@@ -92,9 +122,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 16,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
+    backgroundColor: 'transparent',
   },
   chatButton: {
     backgroundColor: '#fff',
@@ -117,7 +145,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buyButton: {
-    backgroundColor: '#5BC0EB',
+    backgroundColor: '#3CC7F5',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,

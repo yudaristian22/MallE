@@ -8,7 +8,10 @@ import {
   Alert,
 } from 'react-native';
 
-const CheckoutScreen = ({route}) => {
+import Icon from 'react-native-vector-icons/FontAwesome6';
+import {fonts} from '../assets/fonts';
+
+const CheckoutScreen = ({route, navigation}) => {
   const [selectedPayment, setSelectedPayment] = useState('COD');
   const {item} = route.params;
 
@@ -21,6 +24,15 @@ const CheckoutScreen = ({route}) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.iconHeader}
+          onPress={() => navigation.pop()}>
+          <Icon name="angle-left" size={25} color="#3E3E40" />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>Checkout</Text>
+      </View>
+
       {/* Product Section */}
       <View style={styles.productContainer}>
         <Image source={item.image} style={styles.productImage} />
@@ -87,12 +99,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 16,
+    paddingTop: 20,
   },
   header: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconHeader: {
+    position: 'absolute',
+    left: 1,
+  },
+  headerText: {
+    fontFamily: fonts.primary.bold,
+    fontSize: 18,
     textAlign: 'center',
-    marginVertical: 16,
   },
   productContainer: {
     flexDirection: 'row',
@@ -157,10 +179,8 @@ const styles = StyleSheet.create({
   },
   summaryContainer: {
     padding: 16,
-    borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
-    marginBottom: 16,
     marginTop: 100,
   },
   summaryTitle: {
@@ -195,7 +215,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buyButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#3CC7F5',
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',

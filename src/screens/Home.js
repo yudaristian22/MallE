@@ -12,6 +12,8 @@ import {
   StatusBar,
 } from 'react-native';
 
+import Icon from 'react-native-vector-icons/Octicons';
+import Icons from 'react-native-vector-icons/FontAwesome6';
 const data = [
   {
     id: '1',
@@ -117,25 +119,30 @@ const Home = ({navigation}) => {
           source={require('../assets/images/logo.png')}
           style={styles.logoImage}
         />
-        <View style={styles.profileIconContainer}>
+        <TouchableOpacity
+          style={styles.profileIconContainer}
+          onPress={() => navigation.navigate('ProfileDetailsMystore')}>
           <Image
             source={require('../assets/images/profile.png')}
             style={styles.profileIcon}
           />
-        </View>
+        </TouchableOpacity>
       </View>
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <Image
-          source={require('../assets/images/search.png')}
-          style={styles.searchIcon}
-        />
+        <TouchableOpacity style={{paddingHorizontal: 10}}>
+          <Icons name="magnifying-glass" size={20} color="#BBBBBB" />
+        </TouchableOpacity>
+
         <TextInput
           style={styles.searchBar}
           placeholder="Search any Product..."
-          placeholderTextColor="#888"
+          placeholderTextColor="#BBBBBB"
         />
+        <TouchableOpacity style={{paddingHorizontal: 10}}>
+          <Icons name="sliders" size={20} color="#BBBBBB" />
+        </TouchableOpacity>
       </View>
 
       {/* Tabs */}
@@ -157,11 +164,8 @@ const Home = ({navigation}) => {
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton}>
-          <Image
-            source={require('../assets/images/home-1.png')}
-            style={styles.icon}
-          />
-          <Text style={styles.footerButtonText}>Home</Text>
+          <Icon name="home" size={20} color="#3CC7F5" />
+          <Text style={[styles.footerButtonText, styles.active]}>Home</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.footerButton}>
@@ -172,7 +176,9 @@ const Home = ({navigation}) => {
           <Text style={styles.footerButtonText}>Shop</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity
+          style={styles.footerButton}
+          onPress={() => navigation.navigate('ProfileDetailsMystore')}>
           <Image
             source={require('../assets/images/settings.png')}
             style={styles.icon}
@@ -187,7 +193,7 @@ const Home = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#ffffff',
   },
   header: {
     flexDirection: 'row',
@@ -219,7 +225,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 16,
     borderRadius: 8,
-    backgroundColor: '#eee',
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
   searchIcon: {
     marginLeft: 10,
@@ -229,7 +239,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flex: 1,
     padding: 10,
-    paddingLeft: 40,
+    paddingLeft: 10,
     height: 40,
   },
   tabs: {
@@ -244,6 +254,9 @@ const styles = StyleSheet.create({
   inactiveTab: {
     color: '#888',
     marginHorizontal: 16,
+  },
+  active: {
+    color: '#3CC7F5',
   },
   content: {
     paddingHorizontal: 16,
