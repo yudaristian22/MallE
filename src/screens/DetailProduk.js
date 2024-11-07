@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
     fontSize: 24,
     marginBottom: 8,
     marginTop: 8,
@@ -95,24 +95,28 @@ const styles = StyleSheet.create({
   category: {
     color: '#555',
     marginBottom: 4,
+    fontFamily: fonts.primary.regular,
   },
   price: {
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
     fontSize: 20,
     marginBottom: 4,
   },
   rating: {
     color: '#555',
+    fontFamily: fonts.primary.regular,
   },
   tDescription: {
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
     marginTop: 16,
     fontSize: 16,
   },
   description: {
     marginTop: 8,
     color: '#575758',
-    fontSize: 16,
+    fontSize: 14,
+    textAlign: 'left',
+    fontFamily: fonts.primary.regular,
   },
   footer: {
     position: 'absolute',
@@ -140,7 +144,8 @@ const styles = StyleSheet.create({
   },
   chatButtonText: {
     color: '#000',
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
+
     textAlign: 'center',
     fontSize: 16,
   },
@@ -159,7 +164,7 @@ const styles = StyleSheet.create({
   },
   buyButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
     textAlign: 'center',
     fontSize: 16,
   },

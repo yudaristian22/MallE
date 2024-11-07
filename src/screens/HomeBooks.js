@@ -1,6 +1,6 @@
 // src/layout/Home.js
 
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,8 @@ import {
 
 import Icon from 'react-native-vector-icons/Octicons';
 import Icons from 'react-native-vector-icons/FontAwesome6';
+import {fonts} from '../assets/fonts';
+import {Modal, Button} from 'react-native';
 const data = [
   {
     id: '1',
@@ -84,7 +86,7 @@ const data = [
   // Tambahkan lebih banyak item sesuai kebutuhan
 ];
 
-const Home = ({navigation}) => {
+const HomeBooks = ({navigation}) => {
   const renderItem = ({item}) => {
     const imageSource =
       typeof item.image === 'string' && item.image.startsWith('http')
@@ -105,6 +107,8 @@ const Home = ({navigation}) => {
       </TouchableOpacity>
     );
   };
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [sortOption, setSortOption] = useState('Recently Added');
 
   return (
     <View style={styles.container}>
@@ -116,7 +120,7 @@ const Home = ({navigation}) => {
           style={styles.timeIcon}
         />
         <Image
-          source={require('../assets/images/logo.png')}
+          source={require('../assets/images/Malle.png')}
           style={styles.logoImage}
         />
         <TouchableOpacity
@@ -140,15 +144,56 @@ const Home = ({navigation}) => {
           placeholder="Search any Product..."
           placeholderTextColor="#BBBBBB"
         />
-        <TouchableOpacity style={{paddingHorizontal: 10}}>
+        <TouchableOpacity
+          style={{paddingHorizontal: 10}}
+          onPress={() => setModalVisible(true)}>
           <Icons name="sliders" size={20} color="#BBBBBB" />
         </TouchableOpacity>
       </View>
 
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Adjust</Text>
+            <Text style={styles.modalSubtitle}>Sort by</Text>
+            <TouchableOpacity
+              style={styles.option}
+              onPress={() => {
+                setSortOption('Recently Added');
+                setModalVisible(false);
+              }}>
+              <Text style={styles.optionText}>Recently Added</Text>
+              {sortOption === 'Recently Added' && (
+                <View style={styles.radioSelected} />
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.option}
+              onPress={() => {
+                setSortOption('Alphabetically (A-Z)');
+                setModalVisible(false);
+              }}>
+              <Text style={styles.optionText}>Alphabetically (A-Z)</Text>
+              {sortOption === 'Alphabetically (A-Z)' && (
+                <View style={styles.radioSelected} />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {/* Tabs */}
       <View style={styles.tabs}>
-        <Text style={styles.activeTab}>Resume</Text>
-        <Text style={styles.inactiveTab}>Books</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeResume')}>
+          <Text style={styles.inactiveTab}>Resume</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeBooks')}>
+          <Text style={styles.activeTab}>Books</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Product List */}
@@ -235,6 +280,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     width: 20,
     height: 20,
+    fontFamily: fonts.primary.regular,
   },
   searchBar: {
     flex: 1,
@@ -248,12 +294,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   activeTab: {
-    fontWeight: 'bold',
     marginHorizontal: 16,
+    fontFamily: fonts.primary.bold,
   },
   inactiveTab: {
     color: '#888',
     marginHorizontal: 16,
+    fontFamily: fonts.primary.regular,
   },
   active: {
     color: '#3CC7F5',
@@ -280,18 +327,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontFamily: fonts.primary.bold,
     paddingLeft: 8,
     fontSize: 18,
   },
   category: {
     color: '#555',
     paddingLeft: 8,
+    fontFamily: fonts.primary.regular,
   },
   price: {
     color: '#000',
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
     paddingLeft: 8,
   },
   rating: {
@@ -299,6 +346,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     paddingLeft: 8,
     fontSize: 10,
+    fontFamily: fonts.primary.regular,
   },
   footer: {
     flexDirection: 'row',
@@ -312,7 +360,47 @@ const styles = StyleSheet.create({
   },
   footerButtonText: {
     color: '#000000',
+    fontFamily: fonts.primary.regular,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    padding: 16,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  modalSubtitle: {
+    fontSize: 16,
+    color: '#888888',
+    marginBottom: 16,
+  },
+  option: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+  },
+  optionText: {
+    fontSize: 16,
+  },
+  radioSelected: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#007AFF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
-export default Home;
+export default HomeBooks;

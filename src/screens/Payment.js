@@ -131,17 +131,19 @@ const styles = StyleSheet.create({
   },
   productTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
   },
   productPrice: {
     fontSize: 16,
     color: '#666',
     marginTop: 4,
+    fontFamily: fonts.primary.regular,
   },
   sectionTitle: {
     fontSize: 14,
     color: '#333',
     marginBottom: 8,
+    fontFamily: fonts.primary.regular,
   },
   paymentContainer: {
     padding: 16,
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
   },
   paymentText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
   },
   summaryContainer: {
     padding: 16,
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
   },
   summaryTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
     marginBottom: 8,
   },
   summaryRow: {
@@ -196,10 +198,12 @@ const styles = StyleSheet.create({
   summaryLabel: {
     fontSize: 14,
     color: '#666',
+    fontFamily: fonts.primary.regular,
   },
   summaryValue: {
     fontSize: 14,
     color: '#333',
+    fontFamily: fonts.primary.regular,
   },
   divider: {
     height: 1,
@@ -208,11 +212,11 @@ const styles = StyleSheet.create({
   },
   totalLabel: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
   },
   totalValue: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
   },
   buyButton: {
     backgroundColor: '#3CC7F5',
@@ -223,7 +227,7 @@ const styles = StyleSheet.create({
   buyButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
   },
 });
 
