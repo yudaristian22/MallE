@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState } from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -8,11 +8,41 @@ import {
   View,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import {fonts} from '../assets/fonts';
+import { fonts } from '../assets/fonts';
+import { FIREBASE_AUTH } from '../../FirebaseConfig'; // Import Firebase config
+import { createUserWithEmailAndPassword } from 'firebase/auth'; // Import function to create users
 
-const SignUp = ({navigation}) => {
+const SignUp = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const onSignUp = () => {
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill out all fields');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
+      .then(userCredential => {
+        const user = userCredential.user;
+        Alert.alert('Success', `Account created for: ${user.email}`);
+        navigation.navigate('SignIn');
+      })
+      .catch(error => {
+        const errorMessage = error.message;
+        Alert.alert('Registration Error', errorMessage);
+      });
+  };
+
   return (
     <ScrollView
       contentContainerStyle={styles.container}
@@ -29,9 +59,13 @@ const SignUp = ({navigation}) => {
       <View style={styles.inputContainer}>
         <Icon name="user" size={20} color="#626262" solid />
         <TextInput
-          style={styles.input}
-          placeholder="Username or Email"
+          style={[styles.input, { color: '#626262' }]}
+          placeholder="Email"
           placeholderTextColor="#676767"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
       </View>
 
@@ -39,9 +73,12 @@ const SignUp = ({navigation}) => {
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} color="#626262" solid />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: '#626262' }]}
           placeholder="Password"
           placeholderTextColor="#676767"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={true}
         />
         <Icon name="eye" size={20} color="#626262" />
       </View>
@@ -53,18 +90,21 @@ const SignUp = ({navigation}) => {
           style={styles.input}
           placeholder="Confirm Password"
           placeholderTextColor="#676767"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry={true}
         />
         <Icon name="eye" size={20} color="#626262" />
       </View>
 
-      {/* agreeText*/}
+      {/* Agree Text */}
       <Text style={styles.agreeText}>
         By clicking the <Text style={styles.registerText}>Register</Text>{' '}
         button, you agree to the public offer
       </Text>
 
       {/* Create Account Button */}
-      <TouchableOpacity style={styles.createButton}>
+      <TouchableOpacity style={styles.createButton} onPress={onSignUp}>
         <Text style={styles.createText}>Create Account</Text>
       </TouchableOpacity>
 
@@ -211,4 +251,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
+
 export default SignUp;
+

@@ -8,31 +8,47 @@ import {
   View,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import {globalStyles} from '../../globalStyles';
-import {fonts} from '../assets/fonts';
+import { fonts } from '../assets/fonts';
+import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth'; // Import signInWithEmailAndPassword dari Firebase
 
-const SignIn = ({navigation}) => {
+const SignIn = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    if (email && password) {
+      signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
+        .then((userCredential) => {
+          Alert.alert('Success', 'Login successful');
+          navigation.navigate('Home');
+        })
+        .catch((error) => {
+          const errorMessage = error.message;
+          Alert.alert('Login Failed', errorMessage);
+        });
+    } else {
+      Alert.alert('Error', 'Please fill in both fields');
+    }
+  };
+
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}>
+    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       <StatusBar backgroundColor={'#FFFFFF'} barStyle={'dark-content'} />
+      <Text style={styles.welcomeText}>Welcome{'\n'}Back!</Text>
 
-      <Text style={styles.welcomeText}>
-        Welcome
-        {'\n'}
-        Back!
-      </Text>
-
-      {/* Username or Email Input */}
+      {/* Email Input */}
       <View style={styles.inputContainer}>
         <Icon name="user" size={20} color="#626262" solid />
         <TextInput
-          style={styles.input}
-          placeholder="Username or Email"
+          style={[styles.input, { color: '#626262' }]}
+          placeholder="Email"
           placeholderTextColor="#676767"
+          value={email}
+          onChangeText={setEmail}
         />
       </View>
 
@@ -40,24 +56,18 @@ const SignIn = ({navigation}) => {
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} color="#626262" solid />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: '#626262' }]}
           placeholder="Password"
           placeholderTextColor="#676767"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
         <Icon name="eye" size={20} color="#626262" />
       </View>
 
-      {/* Forgot Password */}
-      <TouchableOpacity
-        style={styles.forgotPassword}
-        onPress={() => navigation.navigate('ForgotPassword')}>
-        <Text style={styles.forgotText}>Forgot Password?</Text>
-      </TouchableOpacity>
-
       {/* Login Button */}
-      <TouchableOpacity
-        style={styles.loginButton}
-        onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginText}>Login</Text>
       </TouchableOpacity>
 
@@ -132,13 +142,13 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     alignSelf: 'flex-end',
-    elevation: 3,
+    marginTop: 10,
   },
   forgotText: {
     fontSize: 14,
     color: '#3CC7F5',
-    fontWeight: 'medium',
     fontFamily: fonts.primary.regular,
+    textDecorationLine: 'underline',
   },
   loginButton: {
     alignItems: 'center',
@@ -146,7 +156,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     marginVertical: 20,
     borderRadius: 6,
-    elevation: 6,
+    elevation: 3,
   },
   loginText: {
     color: '#FFFFFF',
@@ -156,7 +166,7 @@ const styles = StyleSheet.create({
   orText: {
     textAlign: 'center',
     fontSize: 14,
-    marginTop: 50,
+    marginTop: 20,
     color: '#575757',
     fontFamily: fonts.primary.regular,
   },
@@ -178,15 +188,13 @@ const styles = StyleSheet.create({
     borderColor: '#3cc7f5',
   },
   socialIcon: {
-    alignItems: 'center',
-    justifyContent: 'center',
     width: 30,
     height: 30,
   },
   signupContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
     flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
   },
   signupText: {
     fontSize: 14,
@@ -201,4 +209,5 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
 export default SignIn;
