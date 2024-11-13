@@ -74,7 +74,9 @@ const ProfileDetailsMypurchase = ({navigation}) => {
           onPress={() => navigation.navigate('SettingUser')}>
           <Icon name="gear" size={30} color="#FFFFFF" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.plus}>
+        <TouchableOpacity
+          style={styles.plus}
+          onPress={() => navigation.navigate('AddCollection')}>
           <Icon name="plus" size={30} color="#000000" />
         </TouchableOpacity>
       </View>
@@ -95,7 +97,9 @@ const ProfileDetailsMypurchase = ({navigation}) => {
       {/* Orders Section */}
 
       <View style={styles.orderContainer}>
-        <TouchableOpacity style={styles.orderHeader}>
+        <TouchableOpacity
+          style={styles.orderHeader}
+          onPress={() => navigation.navigate('MyStore')}>
           <Text style={styles.orderTitle}>See All</Text>
         </TouchableOpacity>
       </View>

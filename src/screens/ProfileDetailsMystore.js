@@ -78,7 +78,9 @@ const ProfileDetailsMystore = ({navigation}) => {
           onPress={() => navigation.navigate('SettingUser')}>
           <Icon name="gear" size={30} color="#FFFFFF" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.plus}>
+        <TouchableOpacity
+          style={styles.plus}
+          onPress={() => navigation.navigate('AddCollection')}>
           <Icon name="plus" size={30} color="#000000" />
         </TouchableOpacity>
       </View>
