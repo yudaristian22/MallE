@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
   profileName: {
     fontFamily: fonts.primary.extrabold,
-    fontSize: 30,
+    fontSize: 18,
     color: '#000000',
   },
   profileUsername: {
