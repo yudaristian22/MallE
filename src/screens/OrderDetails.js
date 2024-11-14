@@ -210,7 +210,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 3,
     backgroundColor: '#fff',
-    alignItems: 'center',
     marginBottom: 16,
   },
   image: {

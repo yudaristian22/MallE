@@ -11,6 +11,16 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import {fonts} from '../assets/fonts';
 
+const generateRatingStars = stars => {
+  const fullStars = Math.floor(stars);
+  const halfStar = stars % 1 !== 0; // Check if there is a half star
+  let starDisplay = '★'.repeat(fullStars);
+  if (halfStar) {
+    starDisplay += '☆'; // You can change this to a half-star emoji if available or another symbol
+  }
+  return starDisplay.padEnd(5, '☆'); // Ensures there are always 5 stars (full or empty)
+};
+
 const DetailProduk = ({route, navigation}) => {
   const {item} = route.params; // Get item from navigation parameters
 
@@ -30,15 +40,16 @@ const DetailProduk = ({route, navigation}) => {
         <Text style={styles.headerText}>Detail Resume</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Image source={item.image} style={styles.image} />
+      <ScrollView contentContainerStyle={styles.container}>
+        <Image source={{uri: item.image}} style={styles.image} />
         <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.category}>{item.category}</Text>
-        <Text style={styles.price}>{item.price}</Text>
+        <Text style={styles.types}>Category: {item.types}</Text>
+        <Text style={styles.courseName}>Course: {item.courseName}</Text>
+        <Text style={styles.price}>Price: Rp. {item.price}</Text>
         <Text style={styles.rating}>
-          ⭐ {item.rating} ({item.reviews})
+          Rating: {generateRatingStars(item.stars)} ({item.stars})
         </Text>
-        <Text style={styles.tDescription}>Description</Text>
+        <Text>{item.numberOfReview} reviews</Text>
         <Text style={styles.description}>{item.description}</Text>
       </ScrollView>
 
@@ -87,16 +98,22 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
+    color: '#000',
     fontWeight: 'bold',
     fontSize: 24,
     marginBottom: 8,
     marginTop: 8,
   },
-  category: {
+  types: {
+    color: '#555',
+    marginBottom: 4,
+  },
+  courseName: {
     color: '#555',
     marginBottom: 4,
   },
   price: {
+    color: '#000',
     fontWeight: 'bold',
     fontSize: 20,
     marginBottom: 4,
