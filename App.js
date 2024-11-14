@@ -14,6 +14,9 @@ import SettingUser from './src/screens/SettingUser';
 import DetailProduk from './src/screens/DetailProduk';
 import Payment from './src/screens/Payment';
 import Home from './src/screens/Home';
+import AddCollection from './src/screens/AddCollection';
+import MyStore from './src/screens/MyStore';
+import OrderDetail from './src/screens/OrderDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +45,9 @@ function App() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Detail" component={DetailProduk} />
         <Stack.Screen name="Payment" component={Payment} />
+        <Stack.Screen name="AddCollection" component={AddCollection} />
+        <Stack.Screen name="MyStore" component={MyStore} />
+        <Stack.Screen name="OrderDetail" component={OrderDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );
