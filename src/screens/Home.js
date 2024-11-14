@@ -114,10 +114,15 @@ const Home = ({navigation}) => {
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate('OrderDetail')}>
-          <Icons name="clipboard-list" size={20} color="#FFFFFF" />
+          <Icons
+            name="clipboard-list"
+            size={15}
+            paddingLeft={1.5}
+            color="#FFFFFF"
+          />
         </TouchableOpacity>
         <Image
-          source={require('../assets/images/logo.png')}
+          source={require('../assets/images/Malle.png')}
           style={styles.logoImage}
         />
         <TouchableOpacity
@@ -147,10 +152,10 @@ const Home = ({navigation}) => {
       </View>
 
       {/* Tabs */}
-      <View style={styles.tabs}>
+      <TouchableOpacity style={styles.tabs}>
         <Text style={styles.activeTab}>Resume</Text>
         <Text style={styles.inactiveTab}>Books</Text>
-      </View>
+      </TouchableOpacity>
 
       {/* Product List */}
       <FlatList
@@ -176,6 +181,7 @@ const Home = ({navigation}) => {
             source={require('../assets/images/shop.png')}
             style={styles.icon}
           />
+          <Text style={[styles.footerButtonText]}>Shop</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -208,6 +214,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     padding: 10,
     borderRadius: 20,
+    height: 35,
+    width: 35,
   },
   logoImage: {
     width: 100,
