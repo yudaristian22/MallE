@@ -111,10 +111,11 @@ const Home = ({navigation}) => {
       <StatusBar backgroundColor={'#FFFFFF'} barStyle={'dark-content'} />
       {/* Header */}
       <View style={styles.header}>
-        <Image
-          source={require('../assets/images/list.png')}
-          style={styles.timeIcon}
-        />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('OrderDetail')}>
+          <Icons name="clipboard-list" size={20} color="#FFFFFF" />
+        </TouchableOpacity>
         <Image
           source={require('../assets/images/logo.png')}
           style={styles.logoImage}
@@ -168,12 +169,13 @@ const Home = ({navigation}) => {
           <Text style={[styles.footerButtonText, styles.active]}>Home</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity
+          style={styles.footerButton}
+          onPress={() => navigation.navigate('AddCollection')}>
           <Image
             source={require('../assets/images/shop.png')}
             style={styles.icon}
           />
-          <Text style={styles.footerButtonText}>Shop</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -201,9 +203,11 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: 'center',
   },
-  timeIcon: {
-    width: 30,
-    height: 30,
+  button: {
+    backgroundColor: '#3cc7f5',
+    marginHorizontal: 2,
+    padding: 10,
+    borderRadius: 20,
   },
   logoImage: {
     width: 100,

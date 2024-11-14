@@ -70,7 +70,9 @@ const ProfileDetailsMystore = ({navigation}) => {
 
       {/* Action Button */}
       <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('OrderDetail')}>
           <Icon name="clipboard-list" size={30} color="#FFFFFF" />
         </TouchableOpacity>
         <TouchableOpacity
@@ -100,7 +102,9 @@ const ProfileDetailsMystore = ({navigation}) => {
 
       {/* Orders Section */}
       <View style={styles.orderContainer}>
-        <TouchableOpacity style={styles.orderHeader}>
+        <TouchableOpacity
+          style={styles.orderHeader}
+          onPress={() => navigation.navigate('MyStore')}>
           <Text style={styles.orderTitle}>See All</Text>
         </TouchableOpacity>
 

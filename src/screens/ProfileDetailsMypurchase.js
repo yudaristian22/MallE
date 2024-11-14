@@ -66,7 +66,9 @@ const ProfileDetailsMypurchase = ({navigation}) => {
 
       {/* Action Button */}
       <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('OrderDetail')}>
           <Icon name="clipboard-list" size={30} color="#FFFFFF" />
         </TouchableOpacity>
         <TouchableOpacity
