@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,108 +8,10 @@ import {
   StyleSheet,
   FlatList,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Octicons';
 import Icons from 'react-native-vector-icons/FontAwesome6';
-
-const data = [
-  {
-    _id: '6734dd300bd9e9b2f89185e8',
-    image: 'https://picsum.photos/200/300?random=3',
-    title: 'UI/UX Design Essentials',
-    description:
-      'Learn the principles of user interface and user experience design. This course covers key concepts such as wireframing, prototyping, user research, usability testing, and design thinking. You will gain hands-on experience with popular design tools and methods used by top industry professionals. Ideal for designers, developers, and business analysts looking to enhance their skills.',
-    price: 120,
-    types: 'resume',
-    courseName: 'UX/UI Design Fundamentals',
-    stars: 4.2,
-    numberOfReview: 65,
-  },
-  {
-    _id: '6734dd300bd9e9b2f8918ye8',
-    image: 'https://picsum.photos/200/300?random=90',
-    title: 'UI/UX Design Essentials',
-    description:
-      'Learn the principles of user interface and user experience design. This course covers key concepts such as wireframing, prototyping, user research, usability testing, and design thinking. You will gain hands-on experience with popular design tools and methods used by top industry professionals. Ideal for designers, developers, and business analysts looking to enhance their skills.',
-    price: 120,
-    types: 'resume',
-    courseName: 'UX/UI Design Fundamentals',
-    stars: 4.2,
-    numberOfReview: 65,
-  },
-  {
-    _id: '6734dd300bd9e9b2f89185g8',
-    image: 'https://picsum.photos/200/300?random=8',
-    title: 'UI/UX Design Essentials',
-    description:
-      'Learn the principles of user interface and user experience design. This course covers key concepts such as wireframing, prototyping, user research, usability testing, and design thinking. You will gain hands-on experience with popular design tools and methods used by top industry professionals. Ideal for designers, developers, and business analysts looking to enhance their skills.',
-    price: 120,
-    types: 'book',
-    courseName: 'UX/UI Design Fundamentals',
-    stars: 4.2,
-    numberOfReview: 65,
-  },
-  {
-    _id: '6734dd300bd9e9b2f89185e9',
-    image: 'https://picsum.photos/200/300?random=4',
-    title: 'Full Stack Web Development',
-    description:
-      "Become a full stack web developer using modern technologies. This course covers frontend development with HTML, CSS, JavaScript, React, and backend with Node.js and Express. You'll also learn database management, APIs, authentication, and deployment techniques. By the end, you'll have the skills to build and manage complex web applications. Perfect for aspiring developers.",
-    price: 300,
-    types: 'book',
-    courseName: 'Full Stack Masterclass',
-    stars: 5,
-    numberOfReview: 150,
-  },
-  {
-    _id: '6734dd300bd9e9b2f89185ea',
-    image: 'https://picsum.photos/200/300?random=5',
-    title: 'Python for Data Science',
-    description:
-      'Explore data science concepts using Python programming. You will cover data manipulation, data visualization, machine learning, and deep learning with libraries like pandas, NumPy, Matplotlib, and TensorFlow. Projects include real-world datasets and predictive modeling. Gain essential data analysis skills for data science jobs, improving decision-making processes, and more.',
-    price: 180,
-    types: 'book',
-    courseName: 'Data Science with Python',
-    stars: 4.7,
-    numberOfReview: 200,
-  },
-  {
-    _id: '6734dd300bd9e9b2f89185eb',
-    image: 'https://picsum.photos/200/300?random=6',
-    title: 'Networking Basics',
-    description:
-      'Understand computer networking concepts and protocols. This course explains the OSI model, IP addressing, subnetting, routing, switching, and network security principles. Hands-on labs help illustrate how network devices communicate and how data travels across the internet. Essential for IT professionals, beginners in networking, and tech enthusiasts wanting practical knowledge.',
-    price: 100,
-    types: 'resume',
-    courseName: 'Computer Networks 101',
-    stars: 4.1,
-    numberOfReview: 80,
-  },
-  {
-    _id: '6734dd300bd9e9b2f89185ec',
-    image: 'https://picsum.photos/200/300?random=7',
-    title: 'Android App Development',
-    description:
-      'Create your own Android applications from scratch. Learn Java and Kotlin programming, Android Studio setup, UI/UX design for mobile, database management with SQLite, and advanced topics like notifications, sensors, and publishing apps to the Google Play Store. The course focuses on practical projects to equip you with skills to build Android apps.',
-    price: 220,
-    types: 'resume',
-    courseName: 'Android Development',
-    stars: 4.6,
-    numberOfReview: 110,
-  },
-  {
-    _id: '6734dd300bd9e9b2f89185ed',
-    image: 'https://picsum.photos/200/300?random=8',
-    title: 'Ethical Hacking Fundamentals',
-    description:
-      "Learn how to protect systems by understanding hacking strategies. This course covers reconnaissance, scanning, gaining access, maintaining access, and clearing tracks. You'll explore network security, web security, penetration testing, and cyber laws. Practice using ethical hacking tools to secure systems, making you an asset in cybersecurity and IT security fields.",
-    price: 250,
-    types: 'book',
-    courseName: 'Cybersecurity Basics',
-    stars: 4.9,
-    numberOfReview: 135,
-  },
-];
 
 const generateRatingStars = stars => {
   const fullStars = Math.floor(stars);
@@ -124,13 +26,42 @@ const generateRatingStars = stars => {
 const Home = ({navigation}) => {
   // State to manage active tab
   const [activeTab, setActiveTab] = useState('Resume');
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Fungsi untuk mengambil data dari API
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://192.168.43.251:4000/api/products/'); // Ganti dengan URL endpoint API Anda
+        const result = await response.json();
+        setData(result);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      }
+    };
+
+    // useEffect akan dijalankan saat komponen di-mount
+    useEffect(() => {
+      fetchData();
+    }, []);
+
+    // Menampilkan loading saat data belum diambil
+    if (loading) {
+      return (
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    }
 
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
         style={styles.card}
         onPress={() => navigation.navigate('Detail', {item})}>
-        <Image source={{uri: item.image}} style={styles.image} />
+        <Image source={{uri: item.image[0]}} style={styles.image} />
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.courseName}>{item.courseName}</Text>
         <Text style={styles.price}>Rp. {item.price}</Text>
@@ -285,6 +216,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   searchContainer: {
+    color: '#000000',
     flexDirection: 'row',
     alignItems: 'center',
     margin: 16,
@@ -301,6 +233,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   searchBar: {
+    color:'#000000',
     flex: 1,
     padding: 10,
     paddingLeft: 10,
@@ -327,6 +260,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   card: {
+    flexDirection: 'column', // Mengatur elemen dalam kolom
     flex: 1,
     backgroundColor: '#fff',
     borderRadius: 8,

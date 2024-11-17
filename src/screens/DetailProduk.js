@@ -41,7 +41,7 @@ const DetailProduk = ({route, navigation}) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-        <Image source={{uri: item.image}} style={styles.image} />
+        <Image source={{uri: item.image[0]}} style={styles.image} />
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.types}>Category: {item.types}</Text>
         <Text style={styles.courseName}>Course: {item.courseName}</Text>
