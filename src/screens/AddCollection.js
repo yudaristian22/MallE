@@ -2,234 +2,360 @@ import React, {useState} from 'react';
 import {
   View,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  KeyboardAvoidingView, // TAMBAH INI
+  Alert,
 } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import {Dropdown} from 'react-native-element-dropdown'; // TAMBAH INI (YG DROPDOWN PICKER HAPUS AJA)
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {fonts} from '../assets/fonts';
+import {launchImageLibrary} from 'react-native-image-picker'; // TAMBAH INI
+import axios from 'axios';
 
-const AddCollection = ({navigation}) => {
-  const [openCategory, setOpenCategory] = useState(false);
+const AddCollectionScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState('Resume');
+  const [fotoPreview, setFotoPreview] = useState(null); // TAMBAH INI
+
   const [judulMateri, setJudulMateri] = useState('');
   const [mataKuliah, setMataKuliah] = useState('');
   const [deskripsiResume, setDeskripsiResume] = useState('');
   const [semester, setSemester] = useState('0');
-  const [openSemester, setOpenSemester] = useState(false);
   const [harga, setHarga] = useState('');
 
   const [judulBuku, setJudulBuku] = useState('');
   const [penulis, setPenulis] = useState('');
   const [deskripsiBuku, setDeskripsiBuku] = useState('');
 
-  const handleUpload = () => {
-    alert('Data berhasil di-upload!');
+  // TAMBAH INI
+  const labelKategori = [
+    {label: 'Resume', value: 'Resume'},
+    {label: 'Buku', value: 'Buku'},
+  ];
+
+  // TAMBAH INI
+  const labelSemester = [
+    {label: 'Pilih Semester', value: '0'},
+    {label: '1', value: '1'},
+    {label: '2', value: '2'},
+    {label: '3', value: '3'},
+    {label: '4', value: '4'},
+    {label: '5', value: '5'},
+    {label: '6', value: '6'},
+    {label: '7', value: '7'},
+    {label: '8', value: '8'},
+  ];
+
+  // TAMBAH INI
+  const renderItemCategory = item => {
+    const isSelected = item.value === selectedCategory;
+    return (
+      <View
+        style={[
+          styles.itemContainer,
+          isSelected && styles.selectedItemContainer,
+        ]}>
+        <Text style={[styles.itemText, isSelected && styles.selectedItemText]}>
+          {item.label}
+        </Text>
+      </View>
+    );
+  };
+  const renderItemSemester = item => {
+    const isSelected = item.value === semester;
+    return (
+      <View
+        style={[
+          styles.itemContainer,
+          isSelected && styles.selectedItemContainer,
+        ]}>
+        <Text style={[styles.itemText, isSelected && styles.selectedItemText]}>
+          {item.label}
+        </Text>
+      </View>
+    );
   };
 
+  const handleSelectImage = () => {
+    const options = {
+      mediaType: 'photo',
+      maxWidth: 1024,
+      maxHeight: 1024,
+      quality: 0.8,
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.error('ImagePicker Error: ', response.errorMessage);
+      } else {
+        const uri = response.assets[0]?.uri; // Gunakan optional chaining
+        if (uri) {
+          setFotoPreview(uri);
+        } else {
+          Alert.alert('Error', 'Gambar tidak ditemukan');
+        }
+      }
+    });
+  };
+
+    const handleUpload = async () => {
+      const formData = new FormData();
+
+      formData.append('types', selectedCategory.toLowerCase()); // Ganti 'category' dengan 'types'
+      formData.append('price', harga);
+
+      if (selectedCategory === 'Resume') {
+        formData.append('title', judulMateri);
+        formData.append('description', deskripsiResume);
+        formData.append('semester', semester);
+        formData.append('courseName', mataKuliah); // Tambahkan courseName
+      } else if (selectedCategory === 'Buku') {
+        formData.append('title', judulBuku);
+        formData.append('description', deskripsiBuku);
+        formData.append('author', penulis); // Tambahkan jika diperlukan
+      }
+
+      if (fotoPreview) {
+        formData.append('image', {
+          uri: fotoPreview,
+          name: `image_${Date.now()}.jpg`,
+          type: 'image/jpeg',
+        });
+      }
+
+      try {
+        console.log('Uploading data:', formData);
+        const response = await axios.post('http://192.168.43.251:4000/api/products/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        if (response.status === 200) {
+          Alert.alert('Success', 'Data berhasil di-upload!');
+        } else {
+          Alert.alert('Error', 'Upload tidak berhasil!');
+        }
+      } catch (error) {
+        if (error.response) {
+          console.error('Server Error:', error.response.data);
+        } else {
+          console.error('Request Error:', error.message);
+        }
+        Alert.alert('Error', 'Gagal meng-upload data!');
+      }
+    };
+
+
   return (
-    <ScrollView style={styles.container}>
+    // GANTI SCROLLVIEW JADI INI
+    <KeyboardAvoidingView
+      behavior="height"
+      style={[styles.container, {overflow: 'visible'}]}>
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.iconHeader}
-          onPress={() => navigation.pop()}>
+        <TouchableOpacity style={styles.iconHeader}>
           <Icon name="angle-left" size={25} color="#3E3E40" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Tambah Koleksi</Text>
       </View>
 
-      {/* Kategori */}
-      <View style={styles.dropdownContainer}>
-        <Icon name="list" size={20} color="#000" style={styles.icon} />
-        <Text style={styles.label}>
-          Kategori <Text style={styles.star}>*</Text>
-        </Text>
-        <DropDownPicker
-          open={openCategory}
-          value={selectedCategory}
-          items={[
-            {label: 'Resume', value: 'Resume'},
-            {label: 'Buku', value: 'Buku'},
-          ]}
-          setOpen={setOpenCategory}
-          setValue={setSelectedCategory}
-          placeholder=""
-          style={[styles.dropdown]}
-          containerStyle={styles.dropdownWrapper}
-          dropDownContainerStyle={styles.dropDownContainerStyle}
-          listItemContainerStyle={styles.listItemContainerStyle}
-          listItemLabelStyle={styles.listItemLabelStyle}
-          selectedItemContainerStyle={styles.selectedItemContainerStyle}
-          selectedItemLabelStyle={styles.selectedItemLabelStyle}
-          labelStyle={styles.dropdownText}
-          arrowIconStyle={styles.arrowIcon}
-        />
-      </View>
-
-      {/* Foto Preview */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>
-          Foto Preview <Text style={styles.star}>*</Text>
-        </Text>
-        <TouchableOpacity style={styles.photoUpload}>
-          <Text style={styles.photoText}>+ Upload Foto</Text>
-        </TouchableOpacity>
-      </View>
-
-      {selectedCategory === 'Resume' ? (
-        // Jika kategori 'Resume' dipilih
-        <>
-          {/* Judul Materi */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>
-              Judul Materi <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Masukkan Judul Materi"
-              value={judulMateri}
-              onChangeText={setJudulMateri}
-            />
-          </View>
-
-          {/* Mata Kuliah */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>
-              Mata Kuliah <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Masukkan Mata Kuliah"
-              value={mataKuliah}
-              onChangeText={setMataKuliah}
-            />
-          </View>
-
-          {/* Deskripsi Resume */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>
-              Deskripsi Resume <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Masukkan Deskripsi Resume"
-              value={deskripsiResume}
-              onChangeText={setDeskripsiResume}
-            />
-          </View>
-
-          {/* Semester */}
-          <View style={styles.dropdownContainer}>
-            <Icon
-              name="graduation-cap"
-              size={20}
-              color="#000"
-              style={styles.icon}
-            />
-            <Text style={styles.label}>
-              Semester <Text style={styles.star}>*</Text>
-            </Text>
-            <DropDownPicker
-              open={openSemester}
-              value={semester}
-              items={[
-                {label: 'Pilih Semester', value: '0'},
-                {label: '1', value: '1'},
-                {label: '2', value: '2'},
-                {label: '3', value: '3'},
-                {label: '4', value: '4'},
-                {label: '5', value: '5'},
-                {label: '6', value: '6'},
-                {label: '7', value: '7'},
-                {label: '8', value: '8'},
-              ]}
-              setOpen={setOpenSemester}
-              setValue={setSemester}
-              placeholder=""
-              style={[styles.dropdown]}
-              containerStyle={styles.dropdownWrapper}
-              dropDownContainerStyle={styles.dropDownContainerStyle}
-              listItemContainerStyle={styles.listItemContainerStyle}
-              listItemLabelStyle={styles.listItemLabelStyle}
-              selectedItemContainerStyle={styles.selectedItemContainerStyle}
-              selectedItemLabelStyle={styles.selectedItemLabelStyle}
-              labelStyle={styles.dropdownText}
-            />
-          </View>
-        </>
-      ) : (
-        // Jika kategori 'Buku' dipilih
-        <>
-          {/* Judul Buku */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>
-              Judul Buku <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Masukkan Judul Buku"
-              value={judulBuku}
-              onChangeText={setJudulBuku}
-            />
-          </View>
-
-          {/* Penulis */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>
-              Nama Penulis <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Masukkan Nama Penulis"
-              value={penulis}
-              onChangeText={setPenulis}
-            />
-          </View>
-
-          {/* Deskripsi Buku */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>
-              Deskripsi Buku <Text style={styles.star}>*</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Masukkan Nama Penerbit"
-              value={deskripsiBuku}
-              onChangeText={setDeskripsiBuku}
-            />
-          </View>
-        </>
-      )}
-
-      {/* Harga */}
-      <View style={styles.inputContainer}>
-        <View style={styles.customRow}>
-          <Icon name="tags" size={20} color="#000" style={styles.icon} />
+      {/* TAMBAH SCROLLVIEW SEBELUM KATEGORI */}
+      <ScrollView
+        contentContainerStyle={{flexGrow: 1}}
+        keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled={true}
+        contentInsetAdjustmentBehavior="automatic">
+        {/* Kategori */}
+        <View style={styles.dropdownContainer}>
+          <Icon name="list" size={20} color="#000" style={styles.icon} />
           <Text style={styles.label}>
-            Harga <Text style={styles.star}>*</Text>
+            Kategori <Text style={{color: 'red'}}>*</Text>
           </Text>
-        </View>
-        <TextInput
-          style={styles.input}
-          placeholder="Masukkan Nominal"
-          keyboardType="numeric"
-          value={harga}
-          onChangeText={setHarga}
-        />
-      </View>
 
-      {/* Buttons */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.cancelButton}>
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
-          <Text style={styles.uploadText}>Upload</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          {/* UBAH SEMUA KODE DROPDOWN JADI INI */}
+          <Dropdown
+            data={labelKategori}
+            labelField="label"
+            valueField="value"
+            placeholder="Pilih Kategori"
+            value={selectedCategory}
+            onChange={item => setSelectedCategory(item.value)}
+            style={styles.dropdown}
+            selectedTextStyle={styles.dropdownText}
+            placeholderStyle={styles.placeholderText}
+            inputSearchStyle={styles.searchInput}
+            iconStyle={styles.arrowIcon}
+            renderItem={renderItemCategory}
+          />
+        </View>
+
+        {/* UPDATE BAGAIN UPLOAD FOTO */}
+        {/* Foto Preview */}
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>
+            Foto Preview <Text style={{color: 'red'}}>*</Text>
+          </Text>
+          <TouchableOpacity
+            style={styles.photoUpload}
+            onPress={handleSelectImage}>
+            {fotoPreview ? (
+              <Image source={{uri: fotoPreview}} style={styles.previewImage} />
+            ) : (
+              <Text style={styles.photoText}>+ Upload Foto</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {selectedCategory === 'Resume' ? (
+          // Jika kategori 'Resume' dipilih
+          <>
+            {/* Judul Materi */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                Judul Materi <Text style={{color: 'red'}}>*</Text>
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Masukkan Judul Materi"
+                value={judulMateri}
+                onChangeText={setJudulMateri}
+              />
+            </View>
+
+            {/* Mata Kuliah */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                Mata Kuliah <Text style={{color: 'red'}}>*</Text>
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Masukkan Mata Kuliah"
+                value={mataKuliah}
+                onChangeText={setMataKuliah}
+              />
+            </View>
+
+            {/* Deskripsi Resume */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                Deskripsi Resume <Text style={{color: 'red'}}>*</Text>
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Masukkan Deskripsi Resume"
+                value={deskripsiResume}
+                onChangeText={setDeskripsiResume}
+              />
+            </View>
+
+            {/* Semester */}
+            <View style={styles.dropdownContainer}>
+              <Icon
+                name="graduation-cap"
+                size={20}
+                color="#000"
+                style={styles.icon}
+              />
+              <Text style={styles.label}>
+                Semester <Text style={{color: 'red'}}>*</Text>
+              </Text>
+
+              {/* UBAH SEMUA KODE DROPDOWN JADI INI */}
+              <Dropdown
+                data={labelSemester}
+                labelField="label"
+                valueField="value"
+                placeholder="Pilih Kategori"
+                value={semester}
+                onChange={item => setSemester(item.value)}
+                style={styles.dropdown}
+                selectedTextStyle={styles.dropdownText}
+                placeholderStyle={styles.placeholderText}
+                inputSearchStyle={styles.searchInput}
+                iconStyle={styles.arrowIcon}
+                renderItem={renderItemSemester}
+              />
+            </View>
+          </>
+        ) : (
+          // Jika kategori 'Buku' dipilih
+          <>
+            {/* Judul Buku */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                Judul Buku <Text style={{color: 'red'}}>*</Text>
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Masukkan Judul Buku"
+                value={judulBuku}
+                onChangeText={setJudulBuku}
+              />
+            </View>
+
+            {/* Penulis */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                Nama Penulis <Text style={{color: 'red'}}>*</Text>
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Masukkan Nama Penulis"
+                value={penulis}
+                onChangeText={setPenulis}
+              />
+            </View>
+
+            {/* Deskripsi Buku */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                Deskripsi Buku <Text style={{color: 'red'}}>*</Text>
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Masukkan Nama Penerbit"
+                value={deskripsiBuku}
+                onChangeText={setDeskripsiBuku}
+              />
+            </View>
+          </>
+        )}
+
+        {/* Harga */}
+        <View style={styles.inputContainer}>
+          <View style={styles.customRow}>
+            <Icon name="tags" size={20} color="#000" style={styles.icon} />
+            <Text style={styles.label}>
+              Harga <Text style={{color: 'red'}}>*</Text>
+            </Text>
+          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Masukkan Nominal"
+            keyboardType="numeric"
+            value={harga}
+            onChangeText={setHarga}
+          />
+        </View>
+
+        {/* Buttons */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.cancelButton}>
+            <Text style={{color: '#000', fontSize: 16, fontWeight: 'bold'}}>
+              Cancel
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
+            <Text style={{color: '#fff', fontSize: 16, fontWeight: 'bold'}}>
+              Upload
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -241,7 +367,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   header: {
-    paddingVertical: 20,
+    paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -252,7 +378,8 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 20,
-    fontFamily: fonts.primary.bold,
+    fontWeight: 'bold',
+    marginBottom: 16,
     textAlign: 'center',
   },
   inputContainer: {
@@ -266,8 +393,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     color: '#333',
-    marginTop: 2,
-    fontFamily: fonts.primary.semiBold,
+    marginBottom: 8,
   },
   dropdownContainer: {
     flexDirection: 'row',
@@ -280,31 +406,34 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     zIndex: 1000,
   },
-  dropdownWrapper: {
-    flex: 1,
-  },
   dropdown: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 0,
     flex: 1,
+    paddingHorizontal: 8, // TAMBAH INI
   },
-  dropDownContainerStyle: {
-    borderColor: '#ddd',
-    marginTop: -4,
-    zIndex: 1000,
-  },
-  listItemLabel: {
-    fontSize: 14,
-    color: '#333',
-  },
+
+  // HAPUS dropDownContainerStyle & listItemLabel
+
   dropdownText: {
     fontSize: 14,
     color: '#333',
     textAlign: 'right',
     marginRight: 8,
-    marginTop: 2,
-    fontFamily: fonts.primary.regular,
   },
+
+  // TAMBAH itemContainer
+  itemContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+  },
+
+  // TAMBAH selectedItemContainer
+  selectedItemContainer: {
+    backgroundColor: '#87CEFA',
+  },
+
   photoUpload: {
     borderWidth: 1,
     borderColor: '#87CEFA',
@@ -316,12 +445,18 @@ const styles = StyleSheet.create({
   photoText: {
     fontSize: 16,
     color: '#87CEFA',
-    fontFamily: fonts.primary.regular,
+  },
+
+  // TAMBAH previewImage
+  previewImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    resizeMode: 'cover',
   },
   input: {
     fontSize: 16,
     color: '#333',
-    fontFamily: fonts.primary.regular,
   },
   customRow: {
     flexDirection: 'row',
@@ -343,7 +478,7 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     marginRight: 8,
     alignItems: 'center',
-    elevation: 1,
+    elevation: 3,
   },
   uploadButton: {
     flex: 1,
@@ -354,32 +489,11 @@ const styles = StyleSheet.create({
     borderColor: '#00AEEF',
     marginLeft: 8,
     alignItems: 'center',
-    elevation: 1,
+    elevation: 3,
   },
   icon: {
     marginRight: 8,
   },
-  star: {
-    color: 'red',
-  },
-  selectedItemLabelStyle: {
-    color: '#333',
-    fontFamily: fonts.primary.bold,
-  },
-  listItemContainerStyle: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-  },
-  listItemLabelStyle: {
-    color: '#333',
-    fontSize: 16,
-    fontFamily: fonts.primary.regular,
-  },
-  selectedItemContainerStyle: {
-    backgroundColor: '#87CEFA',
-  },
-  cancelText: {color: '#000', fontSize: 16, fontFamily: fonts.primary.bold},
-  uploadText: {color: '#fff', fontSize: 16, fontFamily: fonts.primary.bold},
 });
 
-export default AddCollection;
+export default AddCollectionScreen;

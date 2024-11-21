@@ -35,10 +35,10 @@ const CheckoutScreen = ({route, navigation}) => {
 
       {/* Product Section */}
       <View style={styles.productContainer}>
-        <Image source={item.image} style={styles.productImage} />
+        <Image source={{ uri: item.image[0] }} style={styles.productImage} />
         <View style={styles.productDetails}>
           <Text style={styles.productTitle}>{item.title}</Text>
-          <Text style={styles.productPrice}>{item.price}</Text>
+          <Text style={styles.productPrice}>Rp.{item.price}</Text>
         </View>
       </View>
 
@@ -73,7 +73,7 @@ const CheckoutScreen = ({route, navigation}) => {
         <Text style={styles.summaryTitle}>Ringkasan Pembayaran</Text>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Sub-total</Text>
-          <Text style={styles.summaryValue}>{item.price}</Text>
+          <Text style={styles.summaryValue}>Rp.{item.price}</Text>
         </View>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Metode Pembayaran</Text>
@@ -82,7 +82,7 @@ const CheckoutScreen = ({route, navigation}) => {
         <View style={styles.divider} />
         <View style={styles.summaryRow}>
           <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>{item.price}</Text>
+          <Text style={styles.totalValue}>Rp.{item.price}</Text>
         </View>
       </View>
 
@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
     left: 1,
   },
   headerText: {
+    color: '#000000',
     fontFamily: fonts.primary.bold,
     fontSize: 18,
     textAlign: 'center',
@@ -127,18 +128,22 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   productDetails: {
+    color: '#000000',
     marginLeft: 16,
   },
   productTitle: {
+    color: '#000000',
     fontSize: 16,
     fontWeight: 'bold',
   },
   productPrice: {
+    color: '#000000',
     fontSize: 16,
     color: '#666',
     marginTop: 4,
   },
   sectionTitle: {
+    color: '#000000',
     fontSize: 14,
     color: '#333',
     marginBottom: 8,
@@ -152,6 +157,7 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   paymentOptions: {
+    color: '#000000',
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
@@ -174,6 +180,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   paymentText: {
+    color: '#000000',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -184,6 +191,7 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   summaryTitle: {
+    color: '#000000',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
@@ -194,10 +202,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   summaryLabel: {
+    color: '#000000',
     fontSize: 14,
     color: '#666',
   },
   summaryValue: {
+    color: '#000000',
     fontSize: 14,
     color: '#333',
   },
@@ -207,10 +217,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   totalLabel: {
+    color: '#000000',
     fontSize: 16,
     fontWeight: 'bold',
   },
   totalValue: {
+    color: '#000000',
     fontSize: 16,
     fontWeight: 'bold',
   },
