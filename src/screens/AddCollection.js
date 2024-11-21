@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {launchImageLibrary} from 'react-native-image-picker'; // TAMBAH INI
 import axios from 'axios';
 
-const AddCollectionScreen = () => {
+const AddCollectionScreen = ({navigation}) => {
   const [selectedCategory, setSelectedCategory] = useState('Resume');
   const [fotoPreview, setFotoPreview] = useState(null); // TAMBAH INI
 
@@ -32,7 +32,7 @@ const AddCollectionScreen = () => {
   // TAMBAH INI
   const labelKategori = [
     {label: 'Resume', value: 'Resume'},
-    {label: 'Buku', value: 'Buku'},
+    {label: 'Books', value: 'Book'},
   ];
 
   // TAMBAH INI
@@ -102,7 +102,7 @@ const AddCollectionScreen = () => {
     });
   };
 
-    const handleUpload = async () => {
+  const handleUpload = async () => {
       const formData = new FormData();
 
       formData.append('types', selectedCategory.toLowerCase()); // Ganti 'category' dengan 'types'
@@ -113,7 +113,7 @@ const AddCollectionScreen = () => {
         formData.append('description', deskripsiResume);
         formData.append('semester', semester);
         formData.append('courseName', mataKuliah); // Tambahkan courseName
-      } else if (selectedCategory === 'Buku') {
+      } else if (selectedCategory === 'Book') {
         formData.append('title', judulBuku);
         formData.append('description', deskripsiBuku);
         formData.append('author', penulis); // Tambahkan jika diperlukan
@@ -156,7 +156,7 @@ const AddCollectionScreen = () => {
       behavior="height"
       style={[styles.container, {overflow: 'visible'}]}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.iconHeader}>
+        <TouchableOpacity onPress={() => navigation.pop()} style={styles.iconHeader}>
           <Icon name="angle-left" size={25} color="#3E3E40" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Tambah Koleksi</Text>

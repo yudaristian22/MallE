@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -23,45 +23,54 @@ const generateRatingStars = stars => {
   return starDisplay.padEnd(5, '☆'); // Ensures there are always 5 stars (full or empty)
 };
 
-const Home = ({navigation}) => {
-  // State to manage active tab
+const Home = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Resume');
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    // Fungsi untuk mengambil data dari API
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://192.168.43.251:4000/api/products/'); // Ganti dengan URL endpoint API Anda
-        const result = await response.json();
-        setData(result);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      }
-    };
-
-    // useEffect akan dijalankan saat komponen di-mount
-    useEffect(() => {
-      fetchData();
-    }, []);
-
-    // Menampilkan loading saat data belum diambil
-    if (loading) {
-      return (
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      );
+  // Fetch data from API
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://192.168.43.251:4000/api/products/'); // Replace with your API URL
+      const result = await response.json();
+      setData(result);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLoading(false);
     }
+  };
 
-  const renderItem = ({item}) => {
+  // Use effect for polling
+  useEffect(() => {
+    // Fetch initial data
+    fetchData();
+
+    // Set up interval for polling
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000); // Poll every 5 seconds
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  // Render loading indicator
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  // Render individual product card
+  const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() => navigation.navigate('Detail', {item})}>
-        <Image source={{uri: item.image[0]}} style={styles.image} />
+        onPress={() => navigation.navigate('Detail', { item })}>
+        <Image source={{ uri: item.image[0] }} style={styles.image} />
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.courseName}>{item.courseName}</Text>
         <Text style={styles.price}>Rp. {item.price}</Text>
@@ -101,7 +110,7 @@ const Home = ({navigation}) => {
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <TouchableOpacity style={{paddingHorizontal: 10}}>
+        <TouchableOpacity style={{ paddingHorizontal: 10 }}>
           <Icons name="magnifying-glass" size={20} color="#BBBBBB" />
         </TouchableOpacity>
         <TextInput
@@ -109,7 +118,7 @@ const Home = ({navigation}) => {
           placeholder="Search any Product..."
           placeholderTextColor="#BBBBBB"
         />
-        <TouchableOpacity style={{paddingHorizontal: 10}}>
+        <TouchableOpacity style={{ paddingHorizontal: 10 }}>
           <Icons name="sliders" size={20} color="#BBBBBB" />
         </TouchableOpacity>
       </View>
@@ -137,18 +146,18 @@ const Home = ({navigation}) => {
       {/* Product List */}
       {activeTab === 'Resume' && (
         <FlatList
-          data={data.filter(item => item.types === 'resume')} // Corrected to match the 'types' field
+          data={data.filter(item => item.types === 'resume')}
           renderItem={renderItem}
-          keyExtractor={item => item._id}
+          keyExtractor={item => item._id.toString()}
           numColumns={2}
           contentContainerStyle={styles.content}
         />
       )}
       {activeTab === 'Books' && (
         <FlatList
-          data={data.filter(item => item.types === 'book')} // Corrected to match the 'types' field
+          data={data.filter(item => item.types === 'book')}
           renderItem={renderItem}
-          keyExtractor={item => item._id}
+          keyExtractor={item => item._id.toString()}
           numColumns={2}
           contentContainerStyle={styles.content}
         />
@@ -216,7 +225,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   searchContainer: {
-    color: '#000000',
     flexDirection: 'row',
     alignItems: 'center',
     margin: 16,
@@ -227,17 +235,12 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  searchIcon: {
-    marginLeft: 10,
-    width: 20,
-    height: 20,
-  },
   searchBar: {
-    color:'#000000',
     flex: 1,
     padding: 10,
     paddingLeft: 10,
     height: 40,
+    color: '#000000',
   },
   tabs: {
     flexDirection: 'row',
@@ -260,7 +263,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   card: {
-    flexDirection: 'column', // Mengatur elemen dalam kolom
+    flexDirection: 'column',
     flex: 1,
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -309,14 +312,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 16,
-    borderTopWidth: 1,
-    borderColor: '#ddd',
+    backgroundColor: '#FFFFFF',
   },
   footerButton: {
     alignItems: 'center',
   },
   footerButtonText: {
-    color: '#000000',
+    color: '#888',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 20,
+    height: 20,
   },
 });
 
