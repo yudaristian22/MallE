@@ -8,12 +8,23 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import StarRating from 'react-native-star-rating-widget';
+import {fonts} from '../assets/fonts';
 
 const OrderDetail = ({navigation}) => {
-  const [activeTab, setActiveTab] = useState('Berlangsung');
+  const [activeTab, setActiveTab] = useState('Pembelian');
+  const [ratings, setRatings] = useState({});
 
   const [orderData, setOrderData] = useState({
-    Berlangsung: [
+    Pembelian: [
+      {
+        title: 'Pengantar Jaringan Komputer',
+        price: 'Rp. 28.900',
+        paymentMethod: 'COD',
+        image: require('../assets/images/buku.jpeg'),
+      },
+    ],
+    Penjualan: [
       {
         title: 'Pengantar Jaringan Komputer',
         price: 'Rp. 28.900',
@@ -29,23 +40,15 @@ const OrderDetail = ({navigation}) => {
         image: require('../assets/images/buku.jpeg'),
       },
     ],
-    Batal: [
-      {
-        title: 'Pengantar Jaringan Komputer',
-        price: 'Rp. 28.900',
-        paymentMethod: 'COD',
-        image: require('../assets/images/buku.jpeg'),
-      },
-    ],
   });
 
   const markAsComplete = index => {
-    const updatedBerlangsung = [...orderData.Berlangsung];
-    const completedOrder = updatedBerlangsung.splice(index, 1)[0];
+    const updatedPembelian = [...orderData.Pembelian];
+    const completedOrder = updatedPembelian.splice(index, 1)[0];
 
     setOrderData({
       ...orderData,
-      Berlangsung: updatedBerlangsung,
+      Pembelian: updatedPembelian,
       Selesai: [...orderData.Selesai, completedOrder],
     });
 
@@ -79,12 +82,32 @@ const OrderDetail = ({navigation}) => {
             Pembayaran: {order.paymentMethod}
           </Text>
 
-          {activeTab === 'Berlangsung' && (
-            <TouchableOpacity
-              style={styles.completeButton}
-              onPress={() => markAsComplete(index)}>
-              <Text style={styles.completeButtonText}>Tandai Selesai</Text>
-            </TouchableOpacity>
+          {activeTab === 'Pembelian' && (
+            <View>
+              {/* Rating Widget */}
+              <StarRating
+                rating={ratings[index] || 0} // default 0 jika belum ada rating
+                onChange={rating => {
+                  setRatings({...ratings, [index]: rating}); // simpan raing
+                }}
+                starSize={30}
+                style={styles.StarRating}
+              />
+
+              <TouchableOpacity
+                style={[
+                  styles.completeButton,
+                  !ratings[index] && {backgroundColor: '#ccc'}, //disable jika rating belum ada
+                ]}
+                onPress={() => ratings[index] && markAsComplete(index)}
+                disabled={!ratings[index]}>
+                <Text style={styles.completeButtonText}>Tandai Selesai</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {activeTab === 'Penjualan' && (
+            <View style={styles.textContainer}></View>
           )}
 
           {activeTab === 'Selesai' && (
@@ -95,18 +118,6 @@ const OrderDetail = ({navigation}) => {
                 size={16}
                 color="#00AEEF"
                 style={styles.completedIcon}
-              />
-            </View>
-          )}
-
-          {activeTab === 'Batal' && (
-            <View style={styles.textContainer}>
-              <Text style={styles.cancelledText}>Transaksi Batal</Text>
-              <Icon
-                name="times-circle"
-                size={16}
-                color="#FF3B30"
-                style={styles.cancelledIcon}
               />
             </View>
           )}
@@ -128,7 +139,7 @@ const OrderDetail = ({navigation}) => {
 
       {/* Tab Navigation */}
       <View style={styles.tabs}>
-        {['Berlangsung', 'Selesai', 'Batal'].map(tab => (
+        {['Pembelian', 'Penjualan', 'Selesai'].map(tab => (
           <TouchableOpacity
             key={tab}
             onPress={() => setActiveTab(tab)}
@@ -168,7 +179,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -185,10 +196,11 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 16,
     color: '#888',
+    fontFamily: fonts.primary.bold,
   },
   activeTabText: {
     color: '#000',
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
   },
   activeDot: {
     width: 6,
@@ -223,7 +235,7 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
     marginBottom: 4,
   },
   price: {
@@ -245,7 +257,7 @@ const styles = StyleSheet.create({
   },
   completeButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
   },
   textContainer: {
     flexDirection: 'row',
@@ -254,7 +266,7 @@ const styles = StyleSheet.create({
   },
   completedText: {
     color: '#00AEEF',
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
     marginRight: 4,
   },
   completedIcon: {
@@ -262,7 +274,7 @@ const styles = StyleSheet.create({
   },
   cancelledText: {
     color: '#FF3B30',
-    fontWeight: 'bold',
+    fontFamily: fonts.primary.bold,
     marginRight: 4,
   },
   cancelledIcon: {
@@ -281,6 +293,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888',
   },
+  starRating: {marginTop: 10},
 });
 
 export default OrderDetail;
