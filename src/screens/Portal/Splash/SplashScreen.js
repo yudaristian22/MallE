@@ -16,7 +16,7 @@ const SplashScreen = ({navigation}) => {
       <StatusBar backgroundColor={'#FFFFFF'} barStyle={'dark-content'} />
 
       <Image
-        source={require('../assets/images/Malle.png')}
+        source={require('../../../assets/images/Malle.png')}
         style={styles.image}
         resizeMode="contain"
       />

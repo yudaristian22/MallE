@@ -118,4 +118,7 @@ dependencies {
     }
 }
 
-apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+project.ext.vectoricons = [
+        iconFontNames: [ 'FontAwesome5Pro.ttf', 'FontAwesome.ttf', 'Ionicons.ttf' ] // Sesuaikan
+]
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"

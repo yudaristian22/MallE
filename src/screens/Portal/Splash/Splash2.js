@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {fonts} from '../assets/fonts';
+import {fonts} from '../../../assets/fonts';
 
-const Splash3 = ({navigation}) => {
+const Splash2 = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={'#FFFFFF'} barStyle={'dark-content'} />
@@ -17,7 +17,7 @@ const Splash3 = ({navigation}) => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.pageNumber}>
-          3<Text style={styles.logoHighlight}>/3</Text>
+          2<Text style={styles.logoHighlight}>/3</Text>
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
           <Text style={styles.skipText}>Skip</Text>
@@ -27,11 +27,11 @@ const Splash3 = ({navigation}) => {
       {/* Image*/}
       <View style={styles.viewImage}>
         <Image
-          source={require('../assets/images/Programming.png')}
-          style={styles.image}
+          source={require('../../../assets/images/Group.png')}
           resizeMode="contain"
+          style={styles.image}
         />
-        <Text style={styles.title}>Get Your Order</Text>
+        <Text style={styles.title}>Make Payment</Text>
         <Text style={styles.description}>
           Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
           sint. Velit officia consequat duis enim velit mollit.
@@ -47,13 +47,13 @@ const Splash3 = ({navigation}) => {
 
         <View style={styles.pagination}>
           <View style={styles.dot} />
-          <View style={styles.dot} />
           <View style={[styles.dot, styles.activeDot]} />
+          <View style={styles.dot} />
         </View>
 
         <TouchableOpacity
           style={{position: 'absolute', right: 20}}
-          onPress={() => navigation.navigate('SignIn')}>
+          onPress={() => navigation.navigate('Splash3')}>
           <Text style={styles.nextText}>Next</Text>
         </TouchableOpacity>
       </View>
@@ -101,9 +101,9 @@ const styles = StyleSheet.create({
   title: {
     color: '#000000',
     fontSize: 24,
+    fontFamily: fonts.primary.bold,
     marginBottom: 10,
     textAlign: 'center',
-    fontFamily: fonts.primary.bold,
   },
   description: {
     fontSize: 18,
@@ -114,21 +114,21 @@ const styles = StyleSheet.create({
   },
   viewPagination: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
     paddingVertical: 20,
-  },
-  prevText: {
-    fontSize: 18,
-    color: '#c4c4c4',
-    fontFamily: fonts.primary.bold,
   },
   pagination: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+  },
+  prevText: {
+    fontSize: 18,
+    color: '#c4c4c4',
+    fontFamily: fonts.primary.bold,
   },
   dot: {
     width: 8,
@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
   },
   nextText: {
     fontSize: 18,
-    color: '#3cc7f5',
     fontFamily: fonts.primary.bold,
+    color: '#3cc7f5',
   },
 });
-export default Splash3;
+export default Splash2;

@@ -1,25 +1,61 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
-  StyleSheet,
   Alert,
+  StyleSheet,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { fonts } from '../assets/fonts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Icon from 'react-native-vector-icons/FontAwesome6';
-import {fonts} from '../assets/fonts';
-
-const CheckoutScreen = ({route, navigation}) => {
+const CheckoutScreen = ({ route, navigation }) => {
   const [selectedPayment, setSelectedPayment] = useState('COD');
-  const {item} = route.params;
+  const { item } = route.params; // item harus sudah memuat id_product dan userToken (id_seller)
 
-  const handleBuyNow = () => {
-    Alert.alert(
-      'Purchase Confirmed',
-      `You have chosen ${selectedPayment} as your payment method.`,
-    );
+  // UID dari user yang sedang aktif
+  const userUID = 'activeUserUID'; // Replace with real UID from Firebase/Auth
+
+  // Fungsi untuk POST transaksi
+  const handleBuyNow = async () => {
+    try {
+      const userToken = await AsyncStorage.getItem('userToken'); // Ambil token user dari storage
+      const id_buyer = await AsyncStorage.getItem('uid'); // Ambil UID user aktif
+      const apiURL = 'http://192.168.43.251:4000/api/transactions/';
+
+      const transactionData = {
+        id_product: item._id, // id produk dari item yang dipilih
+        id_seller: item.userToken, // userToken seller dari produk
+        id_buyer: id_buyer, // UID user aktif
+        total: item.price, // Total harga
+        payment_method: selectedPayment, // Metode pembayaran yang dipilih
+        status: 'on_process', // Status awal transaksi
+      };
+
+      const response = await fetch(apiURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userToken}`, // Kirim token untuk autentikasi
+        },
+        body: JSON.stringify(transactionData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Success', 'Your transaction has been created successfully!');
+//        navigation.replace('TransactionSuccessScreen'); // Arahkan ke halaman success
+      } else {
+        console.error(result);
+        Alert.alert('Error', 'Failed to create transaction. Please try again.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'An error occurred. Please try again.');
+    }
   };
 
   return (
@@ -53,7 +89,7 @@ const CheckoutScreen = ({route, navigation}) => {
             ]}
             onPress={() => setSelectedPayment('gopay')}>
             <Image
-              source={require('../assets/images/gopay_icon.png')} // Replace with actual gopay icon path
+              source={require('../assets/images/gopay_icon.png')}
               style={styles.paymentIcon}
             />
           </TouchableOpacity>

@@ -100,9 +100,9 @@ const Home = ({ navigation }) => {
         />
         <TouchableOpacity
           style={styles.profileIconContainer}
-          onPress={() => navigation.navigate('ProfileDetailsMystore')}>
+          onPress={() => navigation.navigate('ProfileDetails')}>
           <Image
-            source={require('../assets/images/profile.png')}
+            source={require('../assets/images/user.png')}
             style={styles.profileIcon}
           />
         </TouchableOpacity>
@@ -182,7 +182,7 @@ const Home = ({ navigation }) => {
 
         <TouchableOpacity
           style={styles.footerButton}
-          onPress={() => navigation.navigate('ProfileDetailsMystore')}>
+          onPress={() => navigation.navigate('ProfileDetails')}>
           <Image
             source={require('../assets/images/settings.png')}
             style={styles.icon}

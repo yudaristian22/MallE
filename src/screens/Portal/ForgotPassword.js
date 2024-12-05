@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import {fonts} from '../assets/fonts';
+import {fonts} from '../../assets/fonts';
 
 const ForgotPassword = () => {
   return (

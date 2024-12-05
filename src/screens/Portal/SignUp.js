@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
   StatusBar,
   StyleSheet,
@@ -11,16 +12,18 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import { fonts } from '../assets/fonts';
-import { FIREBASE_AUTH } from '../../FirebaseConfig'; // Import Firebase config
+import { fonts } from '../../assets/fonts';
+import { FIREBASE_AUTH } from '../../../FirebaseConfig'; // Import Firebase config
 import { createUserWithEmailAndPassword } from 'firebase/auth'; // Import function to create users
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // State untuk password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State untuk confirm password visibility
 
-  const onSignUp = () => {
+  const onSignUp = async () => {
     if (!email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill out all fields');
       return;
@@ -31,16 +34,39 @@ const SignUp = ({ navigation }) => {
       return;
     }
 
-    createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
-      .then(userCredential => {
-        const user = userCredential.user;
-        Alert.alert('Success', `Account created for: ${user.email}`);
-        navigation.navigate('SignIn');
-      })
-      .catch(error => {
-        const errorMessage = error.message;
-        Alert.alert('Registration Error', errorMessage);
-      });
+    try {
+      // Membuat akun dengan Firebase
+      const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      const user = userCredential.user;
+
+      Alert.alert('Success', `Account created for: ${user.email}`);
+
+      // Mendapatkan token (misalnya Firebase token, sesuaikan dengan aplikasi Anda)
+      const token = await user.getIdToken();
+
+      // Mengirimkan data ke API
+      try {
+        const response = await axios.post(
+          'http://192.168.43.251:4000/api/users/',
+          { email: user.email },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Token dikirimkan di header
+            },
+          }
+        );
+        console.log('API Response:', response.data);
+      } catch (apiError) {
+        console.error('API Error:', apiError.response?.data || apiError.message);
+        Alert.alert('API Error', apiError.response?.data?.message || 'Failed to save user data');
+      }
+
+      // Navigasi ke halaman login
+      navigation.navigate('SignIn');
+    } catch (error) {
+      const errorMessage = error.message;
+      Alert.alert('Registration Error', errorMessage);
+    }
   };
 
   return (
@@ -78,23 +104,27 @@ const SignUp = ({ navigation }) => {
           placeholderTextColor="#676767"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry={true}
+          secureTextEntry={!showPassword} // Ubah berdasarkan state
         />
-        <Icon name="eye" size={20} color="#626262" />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Icon name={showPassword ? 'eye-slash' : 'eye'} size={20} color="#626262" />
+        </TouchableOpacity>
       </View>
 
       {/* Confirm Password Input */}
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} color="#626262" solid />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: '#626262' }]}
           placeholder="Confirm Password"
           placeholderTextColor="#676767"
           value={confirmPassword}
           onChangeText={setConfirmPassword}
-          secureTextEntry={true}
+          secureTextEntry={!showConfirmPassword} // Ubah berdasarkan state
         />
-        <Icon name="eye" size={20} color="#626262" />
+        <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+          <Icon name={showConfirmPassword ? 'eye-slash' : 'eye'} size={20} color="#626262" />
+        </TouchableOpacity>
       </View>
 
       {/* Agree Text */}
@@ -107,31 +137,6 @@ const SignUp = ({ navigation }) => {
       <TouchableOpacity style={styles.createButton} onPress={onSignUp}>
         <Text style={styles.createText}>Create Account</Text>
       </TouchableOpacity>
-
-      {/* Or Continue With */}
-      <Text style={styles.orText}>- OR Continue With -</Text>
-
-      {/* Social Media */}
-      <View style={styles.socialContainer}>
-        <TouchableOpacity style={styles.socialBorder}>
-          <Image
-            source={require('../assets/images/google.png')}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialBorder}>
-          <Image
-            source={require('../assets/images/apple.png')}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialBorder}>
-          <Image
-            source={require('../assets/images/facebook.png')}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-      </View>
 
       {/* Sign In */}
       <View style={styles.signInContainer}>
@@ -201,36 +206,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontFamily: fonts.primary.bold,
-  },
-  orText: {
-    textAlign: 'center',
-    fontSize: 14,
-    fontFamily: fonts.primary.regular,
-    marginTop: 10,
-    color: '#575757',
-  },
-  socialContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: 20,
-  },
-  socialBorder: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#d8f4fd',
-    borderRadius: 30,
-    padding: 10,
-    width: 60,
-    height: 60,
-    marginHorizontal: 5,
-    borderWidth: 1,
-    borderColor: '#3cc7f5',
-  },
-  socialIcon: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 30,
-    height: 30,
   },
   signInContainer: {
     justifyContent: 'center',

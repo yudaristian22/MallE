@@ -11,25 +11,32 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import { fonts } from '../assets/fonts';
-import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import { fonts } from '../../assets/fonts';
+import { FIREBASE_AUTH } from '../../../FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth'; // Import signInWithEmailAndPassword dari Firebase
+import apiClient from '../../../apiClient'; // Axios instance
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignIn = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State untuk visibilitas password
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (email && password) {
-      signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
-        .then((userCredential) => {
-          Alert.alert('Success', 'Login successful');
-          navigation.navigate('Home');
-        })
-        .catch((error) => {
-          const errorMessage = error.message;
-          Alert.alert('Login Failed', errorMessage);
-        });
+      try {
+        const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+        const user = userCredential.user;
+
+        const token = await user.getIdToken();
+        await AsyncStorage.setItem('userToken', token);
+
+        Alert.alert('Success', `Login successful`);
+        navigation.navigate('Home');
+      } catch (error) {
+        const errorMessage = error.message;
+        Alert.alert('Login Failed', errorMessage);
+      }
     } else {
       Alert.alert('Error', 'Please fill in both fields');
     }
@@ -59,42 +66,19 @@ const SignIn = ({ navigation }) => {
           style={[styles.input, { color: '#626262' }]}
           placeholder="Password"
           placeholderTextColor="#676767"
-          secureTextEntry
+          secureTextEntry={!isPasswordVisible} // Atur visibilitas berdasarkan state
           value={password}
           onChangeText={setPassword}
         />
-        <Icon name="eye" size={20} color="#626262" />
+        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+          <Icon name={isPasswordVisible ? 'eye-slash' : 'eye'} size={20} color="#626262" />
+        </TouchableOpacity>
       </View>
 
       {/* Login Button */}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginText}>Login</Text>
       </TouchableOpacity>
-
-      {/* Or Continue With */}
-      <Text style={styles.orText}>- OR Continue With -</Text>
-
-      {/* Social Media */}
-      <View style={styles.socialContainer}>
-        <TouchableOpacity style={styles.socialBorder}>
-          <Image
-            source={require('../assets/images/google.png')}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialBorder}>
-          <Image
-            source={require('../assets/images/apple.png')}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialBorder}>
-          <Image
-            source={require('../assets/images/facebook.png')}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-      </View>
 
       {/* Sign Up */}
       <View style={styles.signupContainer}>
@@ -162,34 +146,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontFamily: fonts.primary.bold,
-  },
-  orText: {
-    textAlign: 'center',
-    fontSize: 14,
-    marginTop: 20,
-    color: '#575757',
-    fontFamily: fonts.primary.regular,
-  },
-  socialContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: 20,
-  },
-  socialBorder: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#d8f4fd',
-    borderRadius: 30,
-    padding: 10,
-    width: 60,
-    height: 60,
-    marginHorizontal: 5,
-    borderWidth: 1,
-    borderColor: '#3cc7f5',
-  },
-  socialIcon: {
-    width: 30,
-    height: 30,
   },
   signupContainer: {
     flexDirection: 'row',

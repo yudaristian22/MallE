@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {fonts} from '../assets/fonts';
+import {fonts} from '../../../assets/fonts';
 
-const Splash1 = ({navigation}) => {
+const Splash3 = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={'#FFFFFF'} barStyle={'dark-content'} />
@@ -17,7 +17,7 @@ const Splash1 = ({navigation}) => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.pageNumber}>
-          1<Text style={styles.logoHighlight}>/3</Text>
+          3<Text style={styles.logoHighlight}>/3</Text>
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
           <Text style={styles.skipText}>Skip</Text>
@@ -27,11 +27,11 @@ const Splash1 = ({navigation}) => {
       {/* Image*/}
       <View style={styles.viewImage}>
         <Image
-          source={require('../assets/images/Coder.png')}
-          resizeMode="contain"
+          source={require('../../../assets/images/Programming.png')}
           style={styles.image}
+          resizeMode="contain"
         />
-        <Text style={styles.title}>Choose Product</Text>
+        <Text style={styles.title}>Get Your Order</Text>
         <Text style={styles.description}>
           Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
           sint. Velit officia consequat duis enim velit mollit.
@@ -39,15 +39,21 @@ const Splash1 = ({navigation}) => {
       </View>
 
       <View style={styles.viewPagination}>
+        <TouchableOpacity
+          style={{position: 'absolute', left: 20}}
+          onPress={() => navigation.pop()}>
+          <Text style={styles.prevText}>Prev</Text>
+        </TouchableOpacity>
+
         <View style={styles.pagination}>
+          <View style={styles.dot} />
+          <View style={styles.dot} />
           <View style={[styles.dot, styles.activeDot]} />
-          <View style={styles.dot} />
-          <View style={styles.dot} />
         </View>
 
         <TouchableOpacity
           style={{position: 'absolute', right: 20}}
-          onPress={() => navigation.navigate('Splash2')}>
+          onPress={() => navigation.navigate('SignIn')}>
           <Text style={styles.nextText}>Next</Text>
         </TouchableOpacity>
       </View>
@@ -95,9 +101,9 @@ const styles = StyleSheet.create({
   title: {
     color: '#000000',
     fontSize: 24,
-    fontFamily: fonts.primary.extrabold,
     marginBottom: 10,
     textAlign: 'center',
+    fontFamily: fonts.primary.bold,
   },
   description: {
     fontSize: 18,
@@ -113,6 +119,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingVertical: 20,
   },
+  prevText: {
+    fontSize: 18,
+    color: '#c4c4c4',
+    fontFamily: fonts.primary.bold,
+  },
   pagination: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -127,14 +138,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   activeDot: {
-    backgroundColor: '#17223b',
+    backgroundColor: '#000000',
     width: 40,
     paddingRight: 5,
   },
   nextText: {
     fontSize: 18,
-    fontFamily: fonts.primary.bold,
     color: '#3cc7f5',
+    fontFamily: fonts.primary.bold,
   },
 });
-export default Splash1;
+export default Splash3;

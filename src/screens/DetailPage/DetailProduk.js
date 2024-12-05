@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import {fonts} from '../assets/fonts';
+import {fonts} from '../../assets/fonts';
 
 const generateRatingStars = stars => {
   const fullStars = Math.floor(stars);

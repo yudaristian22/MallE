@@ -14,6 +14,8 @@ import {Dropdown} from 'react-native-element-dropdown'; // TAMBAH INI (YG DROPDO
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {launchImageLibrary} from 'react-native-image-picker'; // TAMBAH INI
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const AddCollectionScreen = ({navigation}) => {
   const [selectedCategory, setSelectedCategory] = useState('Resume');
@@ -103,52 +105,62 @@ const AddCollectionScreen = ({navigation}) => {
   };
 
   const handleUpload = async () => {
-      const formData = new FormData();
+    const formData = new FormData();
 
-      formData.append('types', selectedCategory.toLowerCase()); // Ganti 'category' dengan 'types'
-      formData.append('price', harga);
+    formData.append('types', selectedCategory.toLowerCase()); // Ganti 'category' dengan 'types'
+    formData.append('price', harga);
 
-      if (selectedCategory === 'Resume') {
-        formData.append('title', judulMateri);
-        formData.append('description', deskripsiResume);
-        formData.append('semester', semester);
-        formData.append('courseName', mataKuliah); // Tambahkan courseName
-      } else if (selectedCategory === 'Book') {
-        formData.append('title', judulBuku);
-        formData.append('description', deskripsiBuku);
-        formData.append('author', penulis); // Tambahkan jika diperlukan
+    if (selectedCategory === 'Resume') {
+      formData.append('title', judulMateri);
+      formData.append('description', deskripsiResume);
+      formData.append('semester', semester);
+      formData.append('courseName', mataKuliah); // Tambahkan courseName
+    } else if (selectedCategory === 'Book') {
+      formData.append('title', judulBuku);
+      formData.append('description', deskripsiBuku);
+      formData.append('author', penulis); // Tambahkan jika diperlukan
+    }
+
+    if (fotoPreview) {
+      formData.append('image', {
+        uri: fotoPreview,
+        name: `image_${Date.now()}.jpg`,
+        type: 'image/jpeg',
+      });
+    }
+
+    try {
+      // Ambil userToken dari AsyncStorage
+      const userToken = await AsyncStorage.getItem('userToken');
+
+      if (!userToken) {
+        Alert.alert('Error', 'Token tidak ditemukan, silakan login ulang!');
+        return;
       }
 
-      if (fotoPreview) {
-        formData.append('image', {
-          uri: fotoPreview,
-          name: `image_${Date.now()}.jpg`,
-          type: 'image/jpeg',
-        });
-      }
+      console.log('Uploading data:', formData);
+      const response = await axios.post('http://192.168.43.251:4000/api/products/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${userToken}`, // Kirim userToken dalam header
+        },
+      });
 
-      try {
-        console.log('Uploading data:', formData);
-        const response = await axios.post('http://192.168.43.251:4000/api/products/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        if (response.status === 200) {
-          Alert.alert('Success', 'Data berhasil di-upload!');
-        } else {
-          Alert.alert('Error', 'Upload tidak berhasil!');
-        }
-      } catch (error) {
-        if (error.response) {
-          console.error('Server Error:', error.response.data);
-        } else {
-          console.error('Request Error:', error.message);
-        }
-        Alert.alert('Error', 'Gagal meng-upload data!');
+      if (response.status === 200) {
+        Alert.alert('Success', 'Data berhasil di-upload!');
+        navigation.pop();
+      } else {
+        Alert.alert('Error', 'Upload tidak berhasil!');
       }
-    };
-
+    } catch (error) {
+      if (error.response) {
+        console.error('Server Error:', error.response.data);
+      } else {
+        console.error('Request Error:', error.message);
+      }
+      Alert.alert('Error', 'Gagal meng-upload data!');
+    }
+  };
 
   return (
     // GANTI SCROLLVIEW JADI INI
