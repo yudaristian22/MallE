@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+<<<<<<< HEAD
   FlatList,
   Image,
   TextInput,
@@ -43,6 +44,52 @@ const OrderDetails = ({ navigation }) => {
         return { ...order, status: "selesai" };
       }
       return order;
+=======
+} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import StarRating from 'react-native-star-rating-widget';
+import {fonts} from '../assets/fonts';
+
+const OrderDetail = ({navigation}) => {
+  const [activeTab, setActiveTab] = useState('Pembelian');
+  const [ratings, setRatings] = useState({});
+
+  const [orderData, setOrderData] = useState({
+    Pembelian: [
+      {
+        title: 'Pengantar Jaringan Komputer',
+        price: 'Rp. 28.900',
+        paymentMethod: 'COD',
+        image: require('../assets/images/buku.jpeg'),
+      },
+    ],
+    Penjualan: [
+      {
+        title: 'Pengantar Jaringan Komputer',
+        price: 'Rp. 28.900',
+        paymentMethod: 'COD',
+        image: require('../assets/images/buku.jpeg'),
+      },
+    ],
+    Selesai: [
+      {
+        title: 'Pengantar Jaringan Komputer',
+        price: 'Rp. 28.900',
+        paymentMethod: 'COD',
+        image: require('../assets/images/buku.jpeg'),
+      },
+    ],
+  });
+
+  const markAsComplete = index => {
+    const updatedPembelian = [...orderData.Pembelian];
+    const completedOrder = updatedPembelian.splice(index, 1)[0];
+
+    setOrderData({
+      ...orderData,
+      Pembelian: updatedPembelian,
+      Selesai: [...orderData.Selesai, completedOrder],
+>>>>>>> cd8c9d31405ac8f46fd40d82de0fdbc18c311b7d
     });
     setOrders(updatedOrders);
   };
@@ -67,6 +114,7 @@ const OrderDetails = ({ navigation }) => {
     setOrders(updatedOrders);
   };
 
+<<<<<<< HEAD
   const renderOrder = ({ item }) => (
     <View style={styles.card}>
       <Image source={{ uri: item.image }} style={styles.image} />
@@ -134,6 +182,58 @@ const OrderDetails = ({ navigation }) => {
             )}
           </>
         )}
+=======
+    return orders.map((order, index) => (
+      <View key={index} style={styles.orderItem}>
+        <Image source={order.image} style={styles.image} />
+        <View style={styles.orderInfo}>
+          <Text style={styles.itemTitle}>{order.title}</Text>
+          <Text style={styles.price}>{order.price}</Text>
+          <Text style={styles.paymentMethod}>
+            Pembayaran: {order.paymentMethod}
+          </Text>
+
+          {activeTab === 'Pembelian' && (
+            <View>
+              {/* Rating Widget */}
+              <StarRating
+                rating={ratings[index] || 0} // default 0 jika belum ada rating
+                onChange={rating => {
+                  setRatings({...ratings, [index]: rating}); // simpan raing
+                }}
+                starSize={30}
+                style={styles.StarRating}
+              />
+
+              <TouchableOpacity
+                style={[
+                  styles.completeButton,
+                  !ratings[index] && {backgroundColor: '#ccc'}, //disable jika rating belum ada
+                ]}
+                onPress={() => ratings[index] && markAsComplete(index)}
+                disabled={!ratings[index]}>
+                <Text style={styles.completeButtonText}>Tandai Selesai</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {activeTab === 'Penjualan' && (
+            <View style={styles.textContainer}></View>
+          )}
+
+          {activeTab === 'Selesai' && (
+            <View style={styles.textContainer}>
+              <Text style={styles.completedText}>Order Selesai</Text>
+              <Icon
+                name="check-circle"
+                size={16}
+                color="#00AEEF"
+                style={styles.completedIcon}
+              />
+            </View>
+          )}
+        </View>
+>>>>>>> cd8c9d31405ac8f46fd40d82de0fdbc18c311b7d
       </View>
     </View>
   );
@@ -153,7 +253,11 @@ const OrderDetails = ({ navigation }) => {
 
       {/* Tabs */}
       <View style={styles.tabs}>
+<<<<<<< HEAD
         {["pembelian", "penjualan"].map((tab) => (
+=======
+        {['Pembelian', 'Penjualan', 'Selesai'].map(tab => (
+>>>>>>> cd8c9d31405ac8f46fd40d82de0fdbc18c311b7d
           <TouchableOpacity
             key={tab}
             style={styles.tab}
@@ -203,9 +307,15 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 20,
+<<<<<<< HEAD
     fontWeight: "bold",
     textAlign: "center",
     color: '#333',
+=======
+    fontFamily: fonts.primary.bold,
+    marginBottom: 16,
+    textAlign: 'center',
+>>>>>>> cd8c9d31405ac8f46fd40d82de0fdbc18c311b7d
   },
   tabs: {
     flexDirection: "row",
@@ -213,9 +323,25 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingVertical: 8,
   },
+<<<<<<< HEAD
   tab: { flex: 1, alignItems: "center" },
   tabText: { fontSize: 16, color: "#888" },
   activeTabText: { color: "#000", fontWeight: "bold" },
+=======
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  tabText: {
+    fontSize: 16,
+    color: '#888',
+    fontFamily: fonts.primary.bold,
+  },
+  activeTabText: {
+    color: '#000',
+    fontFamily: fonts.primary.bold,
+  },
+>>>>>>> cd8c9d31405ac8f46fd40d82de0fdbc18c311b7d
   activeDot: {
     width: 6,
     height: 6,
@@ -227,13 +353,54 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#fff",
     padding: 16,
+<<<<<<< HEAD
     marginVertical: 8,
+=======
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#eee',
+    marginLeft: 8,
+    alignItems: 'center',
+    elevation: 3,
+    backgroundColor: '#fff',
+    marginBottom: 16,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+    marginRight: 15,
+  },
+  orderInfo: {
+    flex: 1,
+  },
+  itemTitle: {
+    fontSize: 16,
+    fontFamily: fonts.primary.bold,
+    marginBottom: 4,
+  },
+  price: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 4,
+  },
+  paymentMethod: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 12,
+  },
+  completeButton: {
+    backgroundColor: '#00AEEF',
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+>>>>>>> cd8c9d31405ac8f46fd40d82de0fdbc18c311b7d
     borderRadius: 8,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
   },
+<<<<<<< HEAD
   image: { width: 80, height: 100, borderRadius: 8, marginRight: 16 },
   cardContent: { flex: 1 },
   title: { color: "#333", fontSize: 16, fontWeight: "bold", marginBottom: 4 },
@@ -242,6 +409,34 @@ const styles = StyleSheet.create({
   status: { fontSize: 14, color: "#888" },
   actions: { flexDirection: "row", marginTop: 10 },
   completeButton: {
+=======
+  completeButtonText: {
+    color: '#fff',
+    fontFamily: fonts.primary.bold,
+  },
+  textContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  completedText: {
+    color: '#00AEEF',
+    fontFamily: fonts.primary.bold,
+    marginRight: 4,
+  },
+  completedIcon: {
+    marginLeft: 4,
+  },
+  cancelledText: {
+    color: '#FF3B30',
+    fontFamily: fonts.primary.bold,
+    marginRight: 4,
+  },
+  cancelledIcon: {
+    marginLeft: 4,
+  },
+  emptyStateContainer: {
+>>>>>>> cd8c9d31405ac8f46fd40d82de0fdbc18c311b7d
     flex: 1,
     backgroundColor: "#007BFF",
     padding: 10,
@@ -262,6 +457,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+<<<<<<< HEAD
   ratingLabel: { fontSize: 14, color: "#333", marginRight: 8 },
   stars: {
     flexDirection: "row",
@@ -274,6 +470,9 @@ const styles = StyleSheet.create({
   },
   emptyState: { flex: 1, justifyContent: "center", alignItems: "center" },
   emptyText: { fontSize: 16, color: "#888" },
+=======
+  starRating: {marginTop: 10},
+>>>>>>> cd8c9d31405ac8f46fd40d82de0fdbc18c311b7d
 });
 
 export default OrderDetails;
